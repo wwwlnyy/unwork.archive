@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, FlatList, Image, Linking, Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { CloseIcon } from './icons/CloseIcon';
@@ -14,6 +14,39 @@ type SourceListSheetProps = {
   items: SavedItem[];
   onClose: () => void;
 };
+
+function SourceRow({ item }: { item: SavedItem }) {
+  const [isImageReady, setIsImageReady] = useState(!item.thumbnail);
+
+  return (
+    <Pressable style={styles.row} onPress={() => Linking.openURL(item.url)}>
+      <View style={styles.thumbnailWrap}>
+        {item.thumbnail && (
+          <Image
+            source={{ uri: imageProxyUrl(item.thumbnail) }}
+            style={styles.thumbnail}
+            onLoadEnd={() => setIsImageReady(true)}
+          />
+        )}
+        {!isImageReady && (
+          <View style={[styles.thumbnail, styles.thumbnailPlaceholder, styles.thumbnailOverlay]} />
+        )}
+      </View>
+      {isImageReady && (
+        <View style={styles.rowText}>
+          <AppText weight="semiBold" size="sm" color={colors.text} numberOfLines={2}>
+            {item.title ?? item.url}
+          </AppText>
+          {item.author ? (
+            <AppText weight="regular" size="xs" color={colors.textFaint} numberOfLines={1}>
+              {item.author}
+            </AppText>
+          ) : null}
+        </View>
+      )}
+    </Pressable>
+  );
+}
 
 export function SourceListSheet({ visible, title, items, onClose }: SourceListSheetProps) {
   const translateY = useRef(new Animated.Value(1)).current;
@@ -54,25 +87,7 @@ export function SourceListSheet({ visible, title, items, onClose }: SourceListSh
           data={items}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <Pressable style={styles.row} onPress={() => Linking.openURL(item.url)}>
-              {item.thumbnail ? (
-                <Image source={{ uri: imageProxyUrl(item.thumbnail) }} style={styles.thumbnail} />
-              ) : (
-                <View style={[styles.thumbnail, styles.thumbnailPlaceholder]} />
-              )}
-              <View style={styles.rowText}>
-                <AppText weight="semiBold" size="sm" color={colors.text} numberOfLines={2}>
-                  {item.title ?? item.url}
-                </AppText>
-                {item.author ? (
-                  <AppText weight="regular" size="xs" color={colors.textFaint} numberOfLines={1}>
-                    {item.author}
-                  </AppText>
-                ) : null}
-              </View>
-            </Pressable>
-          )}
+          renderItem={({ item }) => <SourceRow item={item} />}
         />
       </Animated.View>
     </Modal>
@@ -112,6 +127,10 @@ const styles = StyleSheet.create({
     gap: 12,
     alignItems: 'center',
   },
+  thumbnailWrap: {
+    width: 56,
+    height: 56,
+  },
   thumbnail: {
     width: 56,
     height: 56,
@@ -120,6 +139,11 @@ const styles = StyleSheet.create({
   },
   thumbnailPlaceholder: {
     backgroundColor: colors.border,
+  },
+  thumbnailOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
   rowText: {
     flex: 1,

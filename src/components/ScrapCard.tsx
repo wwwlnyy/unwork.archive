@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
 import { AppText } from "./ui/AppText";
@@ -22,6 +23,7 @@ export function ScrapCard({
   onPress,
 }: ScrapCardProps) {
   const entities = item.entities ?? [];
+  const [isImageReady, setIsImageReady] = useState(!item.thumbnail);
 
   return (
     <Pressable
@@ -34,11 +36,15 @@ export function ScrapCard({
           <Image
             source={{ uri: imageProxyUrl(item.thumbnail) }}
             style={styles.image}
+            onLoadEnd={() => setIsImageReady(true)}
           />
         ) : (
           <View style={[styles.image, styles.imagePlaceholder]}>
             <AppText size="xl">🔖</AppText>
           </View>
+        )}
+        {!isImageReady && (
+          <View style={[styles.image, styles.imageLoadingOverlay]} />
         )}
         {selectable && (
           <View style={[styles.checkbox, selected && styles.checkboxSelected]}>
@@ -51,38 +57,41 @@ export function ScrapCard({
         )}
       </View>
 
-      <AppText
-        weight="semiBold"
-        size="sm"
-        numberOfLines={2}
-        style={styles.title}
-      >
-        {item.title ?? item.url}
-      </AppText>
-
-      <AppText size="xs" color={colors.textFaint} style={styles.platform}>
-        {platformLabel(item.platform)}
-      </AppText>
-
-      {entities.length > 0 && (
-        <View style={styles.entityBlock}>
-          <AppText size="xs" color={colors.textFaint}>
-            포함된 항목
+      {isImageReady && (
+        <>
+          <AppText
+            weight="semiBold"
+            size="sm"
+            numberOfLines={2}
+            style={styles.title}
+          >
+            {item.title ?? item.url}
           </AppText>
-          {entities.slice(0, 3).map((entity) => (
-            <AppText key={`${item.id}-${entity.name}`} size="xs" color={colors.textMuted} numberOfLines={1}>
-              {entity.name}
-              {entity.note ? ` · ${entity.note}` : ''}
-            </AppText>
-          ))}
-          {entities.length > 3 && (
-            <AppText size="xs" color={colors.textFaint}>
-              외 {entities.length - 3}개
-            </AppText>
-          )}
-        </View>
-      )}
 
+          <AppText size="xs" color={colors.textFaint} style={styles.platform}>
+            {platformLabel(item.platform)}
+          </AppText>
+
+          {entities.length > 0 && (
+            <View style={styles.entityBlock}>
+              <AppText size="xs" color={colors.textFaint}>
+                포함된 항목
+              </AppText>
+              {entities.slice(0, 3).map((entity) => (
+                <AppText key={`${item.id}-${entity.name}`} size="xs" color={colors.textMuted} numberOfLines={1}>
+                  {entity.name}
+                  {entity.note ? ` · ${entity.note}` : ''}
+                </AppText>
+              ))}
+              {entities.length > 3 && (
+                <AppText size="xs" color={colors.textFaint}>
+                  외 {entities.length - 3}개
+                </AppText>
+              )}
+            </View>
+          )}
+        </>
+      )}
     </Pressable>
   );
 }
@@ -104,6 +113,12 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  imageLoadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    backgroundColor: colors.border,
   },
   checkbox: {
     position: "absolute",
