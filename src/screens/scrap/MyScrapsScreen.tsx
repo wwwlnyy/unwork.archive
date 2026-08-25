@@ -6,6 +6,7 @@ import {
   Alert,
   AppState,
   FlatList,
+  Image,
   Pressable,
   StyleSheet,
   View,
@@ -19,6 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   deleteItems,
   getItems,
+  imageProxyUrl,
   SessionExpiredError,
   type SavedItem,
 } from "../../lib/api/contentClient";
@@ -26,6 +28,15 @@ import type { RootStackParamList } from "../../navigation/RootNavigator";
 import { colors } from "../../styles/colors";
 
 const POLL_INTERVAL_MS = 2000;
+const PREFETCH_TIMEOUT_MS = 5000;
+
+// 썸네일 하나가 느리거나 실패해도 화면 전체가 무한정 멈추지 않도록 타임아웃을 둔다.
+function prefetchWithTimeout(uri: string): Promise<void> {
+  return Promise.race([
+    Image.prefetch(uri).then(() => undefined).catch(() => undefined),
+    new Promise<void>((resolve) => setTimeout(resolve, PREFETCH_TIMEOUT_MS)),
+  ]);
+}
 
 export function MyScrapsScreen() {
   const { accessToken, logout } = useAuth();
@@ -54,6 +65,13 @@ export function MyScrapsScreen() {
       }
       try {
         const result = await getItems(accessToken);
+        if (showSpinner) {
+          await Promise.all(
+            result
+              .filter((item) => item.thumbnail)
+              .map((item) => prefetchWithTimeout(imageProxyUrl(item.thumbnail!))),
+          );
+        }
         setItems(result);
 
         const hasPendingItem = result.some(
