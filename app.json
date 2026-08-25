@@ -25,7 +25,35 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-share-intent"
+      [
+        "expo-share-intent",
+        {
+          "disableIOS": true,
+          "disableAndroid": true
+        }
+      ],
+      [
+        "expo-share-extension",
+        {
+          "activationRules": [
+            {
+              "type": "url",
+              "max": 1
+            },
+            {
+              "type": "text"
+            }
+          ],
+          "backgroundColor": {
+            "red": 255,
+            "green": 255,
+            "blue": 255,
+            "alpha": 1
+          },
+          "height": 220
+        }
+      ],
+      "expo-font"
     ]
   }
 }
