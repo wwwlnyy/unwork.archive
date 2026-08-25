@@ -36,9 +36,26 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# generated native folders
-/ios
-/android
+# Native folders are committed (EAS build needs the hand-edited Share
+# Extension / Share Receiver source, not a fresh `expo prebuild`).
+# Only build artifacts and machine-specific files are ignored below.
+
+# iOS build artifacts
+/ios/Pods/
+/ios/build/
+/ios/DerivedData/
+/ios/*.xcworkspace/xcuserdata/
+/ios/*.xcodeproj/xcuserdata/
+/ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+/ios/.xcode.env.local
+
+# Android build artifacts
+/android/app/build/
+/android/build/
+/android/.gradle/
+/android/.cxx/
+/android/app/.cxx/
+/android/local.properties
 
 # IDE
 .idea/

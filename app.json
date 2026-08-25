@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "2026Unithon-ScrapApp",
-    "slug": "2026Unithon-ScrapApp",
+    "name": "unwork.archive",
+    "slug": "unwork-archive",
     "scheme": "scrapapp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,9 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
@@ -53,7 +52,37 @@
           "height": 220
         }
       ],
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-secure-store",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.325265117449-9omb1jnqqguk6rk28pt1rai6msonnckv"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "unworkarchiveShareExtension",
+                  "bundleIdentifier": "com.wwwlnyy.x2026UnithonScrapApp.ShareExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.wwwlnyy.x2026UnithonScrapApp"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "f1bbcfd7-8c39-45e0-acf8-1c4d7c5be476"
+      },
+      "appleApplicationGroup": "group.com.wwwlnyy.x2026UnithonScrapApp"
+    }
   }
 }
