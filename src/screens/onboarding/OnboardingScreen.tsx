@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { AppText } from '../../components/ui/AppText';
+import { Screen } from '../../components/ui/Screen';
 import { colors } from '../../styles/colors';
 import type { RootStackParamList } from '../../navigation/RootNavigator';
 
@@ -20,20 +21,18 @@ export function OnboardingScreen({ navigation }: Props) {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
+    <Screen style={styles.container} topSpacing={0}>
       <AppText weight="bold" size="xxl" style={styles.wordmark}>
         un<AppText weight="bold" size="xxl" color={colors.textFaint}>work</AppText>.archive
       </AppText>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.background,
   },
   wordmark: {
     letterSpacing: -1.28,
