@@ -18,12 +18,23 @@ class ShareExtensionViewController: UIViewController {
 
     getShareData { [weak self] sharedItems in
       guard let self = self else { return }
-      guard let urlString = sharedItems?["url"] as? String else {
+      let urlFromText = (sharedItems?["text"] as? String).flatMap(Self.firstURL(in:))
+      guard let urlString = (sharedItems?["url"] as? String) ?? urlFromText else {
         self.finish(statusText: "링크만 저장할 수 있어요")
         return
       }
       self.scrapUrl(urlString)
     }
+  }
+
+  // 유튜브 등 일부 앱은 링크를 public.url이 아니라 "영상 제목 https://... " 같은
+  // 일반 텍스트(public.plain-text)로 공유해서, 텍스트 안에서 URL만 뽑아낸다.
+  private static func firstURL(in text: String) -> String? {
+    guard let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else {
+      return nil
+    }
+    let range = NSRange(text.startIndex..<text.endIndex, in: text)
+    return detector.firstMatch(in: text, options: [], range: range)?.url?.absoluteString
   }
 
   private func scrapUrl(_ urlString: String) {
