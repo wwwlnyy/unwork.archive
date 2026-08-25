@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, Image, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { ChevronRightIcon } from './icons/ChevronRightIcon';
 import { CloseIcon } from './icons/CloseIcon';
@@ -16,7 +16,6 @@ type SidebarProps = {
   onClose: () => void;
   userName: string;
   scrapCount: number;
-  avatarUri?: string;
   onScrapListPress: () => void;
   onPlanChangePress: () => void;
   onLogoutPress: () => void;
@@ -29,7 +28,6 @@ export function Sidebar({
   onClose,
   userName,
   scrapCount,
-  avatarUri,
   onScrapListPress,
   onPlanChangePress,
   onLogoutPress,
@@ -60,24 +58,17 @@ export function Sidebar({
         </Pressable>
 
         <View style={styles.profileRow}>
-          <View style={styles.profileInfo}>
-            <AppText weight="bold" size="xl" color={colors.text}>
-              {userName}
+          <AppText weight="bold" size="xl" color={colors.text}>
+            {userName}
+          </AppText>
+          <View style={styles.scrapCountBlock}>
+            <AppText weight="medium" size="lg" color={colors.text}>
+              {scrapCount.toLocaleString()}
             </AppText>
-            <View style={styles.scrapCountBlock}>
-              <AppText weight="medium" size="lg" color={colors.text}>
-                {scrapCount.toLocaleString()}
-              </AppText>
-              <AppText weight="medium" size="xs" color={colors.textFaint}>
-                스크랩
-              </AppText>
-            </View>
+            <AppText weight="medium" size="xs" color={colors.textFaint}>
+              스크랩
+            </AppText>
           </View>
-          {avatarUri ? (
-            <Image source={{ uri: avatarUri }} style={styles.avatar} />
-          ) : (
-            <View style={[styles.avatar, styles.avatarPlaceholder]} />
-          )}
         </View>
 
         <Pressable onPress={handlePress(onScrapListPress)} style={styles.listRow}>
@@ -142,28 +133,15 @@ const styles = StyleSheet.create({
     height: 31,
   },
   profileRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    gap: 20,
     marginHorizontal: 16,
     marginTop: 33,
     paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  profileInfo: {
-    gap: 20,
-  },
   scrapCountBlock: {
     gap: 4,
-  },
-  avatar: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
-  },
-  avatarPlaceholder: {
-    backgroundColor: colors.accent,
   },
   listRow: {
     flexDirection: 'row',
