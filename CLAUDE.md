@@ -33,6 +33,49 @@ ios/, android/           # expo prebuild로 생성된 네이티브 프로젝트 
 - **Xcode 26.4 이상 필수** — Expo SDK 56/57은 이보다 낮은 버전에서 `expo-modules-jsi` 컴파일 실패함 (Swift 6.2 strict 규칙 충돌, [expo/expo#47539](https://github.com/expo/expo/issues/47539))
 - Android: `$HOME/Library/Android/sdk` 에 SDK 설치됨, AVD `Medium_Phone_API_36.1` 사용 가능
 
+## 자주 쓰는 명령어 (iOS)
+
+### 시뮬레이터에 바로바로 변경사항 확인용 빌드 (Debug + Metro)
+
+시뮬레이터가 이미 켜져 있는 상태에서:
+```bash
+npx expo run:ios
+```
+JS만 고쳤으면 재빌드 없이 Metro가 Fast Refresh 해줌. 이 명령어는 종료되지 않고 터미널에 로그를 계속 스트리밍하니, 로그 확인하려면 **직접 이 터미널에서** 실행해야 함(백그라운드로 돌리면 안 보임).
+
+### 실기기(아이폰/아이패드)에 릴리즈로 시연용 빌드 (Metro/케이블/와이파이 없이 하루 종일 독립 실행)
+
+```bash
+npx expo run:ios --device "<기기 이름>" --configuration Release
+```
+- `--configuration Release`가 핵심 — JS 번들이 앱에 통째로 박혀서 설치 후 Metro 서버 없이 완전히 독립적으로 실행됨
+- `<기기 이름>`은 `xcrun devicectl list devices`로 확인 (예: `이나영의 iPhone`, `iPad (247)`)
+- 설치 끝나면(`Installing ... Complete 100%`) 케이블 뽑아도 됨
+- 무료 Apple ID 인증서 7일 만료 → 만료되면 케이블 다시 연결해서 같은 명령어 재실행
+- **Xcode GUI에서 Run(▶) 버튼으로 실행하면 기본값이 Debug라 이 옵션이 안 먹음** — 반드시 터미널 명령으로 Release 지정해야 함
+
+### 새 기기(특히 아이패드) 최초 연결 시 트러블슈팅
+
+- `xcrun devicectl list devices`에서 기기가 안 보이면: 케이블 연결 + 잠금 해제 + "이 컴퓨터를 신뢰하시겠습니까?" 신뢰
+- `error: Developer Mode disabled`: 기기에서 설정 > 개인정보 보호 및 보안 > 개발자 모드 켜기 → 재시작 요구 팝업 뜨면 재시작 → 재시작 후 잠금 해제 시 뜨는 확인 알럿에서도 반드시 "켜기" 눌러야 최종 적용됨
+- `CommandError: There was an error reading pair record for device`: 페어링 캐시가 깨진 상태. 아래 순서로 재시도:
+  1. `xcrun devicectl manage unpair --device <CoreDevice UUID>`
+  2. 기기에서 설정 > 일반 > 전송 또는 재설정 > 재설정 > **위치 및 개인정보 보호 재설정** (신뢰한 컴퓨터 목록 초기화, 앱 데이터는 안 지워짐)
+  3. 케이블 재연결 → 신뢰 팝업 다시 뜨면 신뢰
+  4. `xcrun devicectl manage pair --device <CoreDevice UUID>`
+  5. 그래도 안 되면 Xcode GUI에서 직접 Run 시도 (CLI보다 페어링을 더 안정적으로 처리하는 경우가 있음) → 이후 터미널 명령으로 Release 재실행
+- `Provisioning profile ... doesn't include the currently selected device`: Xcode에서 `open ios/*.xcworkspace` → TARGETS의 `2026UnithonScrapApp`, `ShareExtension` 각각 Signing & Capabilities 탭에서 자동 서명 확인/재시도(기기가 계정에 자동 등록됨)
+
+### Android APK를 QR/링크로 배포 (부스 시연 등, EAS 클라우드 빌드)
+
+```bash
+npx eas build --profile preview --platform android --non-interactive
+```
+- `eas.json`의 `preview` 프로필은 `distribution: internal`, `buildType: apk`라 Metro 없이 완결되는 standalone 빌드
+- 빌드 끝나면 터미널/빌드 페이지(`https://expo.dev/accounts/wwwlnyy/projects/unwork-archive/builds/...`)에 QR 코드 뜸 → 안드로이드 기기 카메라로 스캔해서 다운로드
+- 로컬 `git push` 불필요 — EAS Build는 로컬 작업 디렉토리를 그대로 압축해서 업로드함 (커밋조차 필수 아님, 다만 관리 차원에서 커밋 후 빌드하는 습관 권장)
+- 사이드로드 APK라 설치 시 Google Play Protect 경고 뜰 수 있음 → "무시하고 설치"
+
 ### 테스트 절차 — Android 에뮬레이터
 
 1. 설치된 AVD 목록 확인 (최초 1회만 확인하면 됨)
