@@ -1,7 +1,7 @@
 {
   "name": "app-group-storage",
   "version": "1.0.0",
-  "description": "Local module for sharing the logged-in user id with the iOS Share Extension via App Group UserDefaults.",
+  "description": "Local module for sharing the logged-in access token with the iOS Share Extension (App Group UserDefaults) and Android ShareReceiverActivity (SharedPreferences).",
   "main": "index.ts",
   "license": "UNLICENSED"
 }
