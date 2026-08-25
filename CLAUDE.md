@@ -69,8 +69,9 @@ npx expo run:ios --device "<기기 이름>" --configuration Release
 ### Android APK를 QR/링크로 배포 (부스 시연 등, EAS 클라우드 빌드)
 
 ```bash
-npx eas build --profile preview --platform android --non-interactive
+npx eas build --profile preview --platform android
 ```
+- `--non-interactive` 없이 그냥 실행하면 터미널이 종료되지 않고 업로드/빌드 진행 상황을 실시간으로 계속 보여줌 (Ctrl+C로 빠져나와도 서버 쪽 빌드는 계속 진행됨)
 - `eas.json`의 `preview` 프로필은 `distribution: internal`, `buildType: apk`라 Metro 없이 완결되는 standalone 빌드
 - 빌드 끝나면 터미널/빌드 페이지(`https://expo.dev/accounts/wwwlnyy/projects/unwork-archive/builds/...`)에 QR 코드 뜸 → 안드로이드 기기 카메라로 스캔해서 다운로드
 - 로컬 `git push` 불필요 — EAS Build는 로컬 작업 디렉토리를 그대로 압축해서 업로드함 (커밋조차 필수 아님, 다만 관리 차원에서 커밋 후 빌드하는 습관 권장)
