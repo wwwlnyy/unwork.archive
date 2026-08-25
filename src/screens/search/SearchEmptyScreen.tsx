@@ -1,11 +1,11 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { SearchResultHeader } from "../../components/SearchResultHeader";
 import { AppText } from "../../components/ui/AppText";
+import { Screen } from "../../components/ui/Screen";
 import { useSearch } from "../../hooks/useSearch";
-import { colors } from "../../styles/colors";
 import type { RootStackParamList } from "../../navigation/RootNavigator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SearchEmpty">;
@@ -32,6 +32,11 @@ export function SearchEmptyScreen({ route, navigation }: Props) {
         query: trimmed,
         result: nextResult,
       });
+    } else if (nextResult.mode === "browse") {
+      navigation.replace("SearchResultBrowse", {
+        query: trimmed,
+        result: nextResult,
+      });
     } else {
       navigation.replace("SearchResultExperience", {
         query: trimmed,
@@ -41,7 +46,7 @@ export function SearchEmptyScreen({ route, navigation }: Props) {
   };
 
   return (
-    <View style={styles.container}>
+    <Screen paddingHorizontal={0}>
       <SearchResultHeader
         query={query}
         onQueryChange={setQuery}
@@ -52,15 +57,11 @@ export function SearchEmptyScreen({ route, navigation }: Props) {
       <AppText weight="regular" size="lg" style={styles.message}>
         관련된 내용이 존재하지 않아요
       </AppText>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface,
-  },
   message: {
     marginTop: 8,
     marginHorizontal: 55,

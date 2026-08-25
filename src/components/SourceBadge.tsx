@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import { AppText } from './ui/AppText';
 import { colors } from '../styles/colors';
@@ -6,18 +6,19 @@ import { colors } from '../styles/colors';
 type SourceBadgeProps = {
   label: string;
   count: number;
+  onPress?: () => void;
 };
 
-export function SourceBadge({ label, count }: SourceBadgeProps) {
+export function SourceBadge({ label, count, onPress }: SourceBadgeProps) {
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onPress} disabled={!onPress}>
       <AppText weight="regular" size="xs" color={colors.text}>
         {label}
       </AppText>
       <AppText weight="regular" size="xs" color={colors.text}>
         {count}개
       </AppText>
-    </View>
+    </Pressable>
   );
 }
 

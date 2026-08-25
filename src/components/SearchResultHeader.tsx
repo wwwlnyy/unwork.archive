@@ -25,7 +25,6 @@ export function SearchResultHeader({ query, onQueryChange, onSubmitEditing, onMe
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 28,
   },
   menuButton: {
     alignSelf: 'flex-end',
