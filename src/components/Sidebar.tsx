@@ -19,6 +19,7 @@ type SidebarProps = {
   avatarUri?: string;
   onScrapListPress: () => void;
   onPlanChangePress: () => void;
+  onLogoutPress: () => void;
   onNoticePress?: () => void;
   onSupportPress?: () => void;
 };
@@ -31,6 +32,7 @@ export function Sidebar({
   avatarUri,
   onScrapListPress,
   onPlanChangePress,
+  onLogoutPress,
   onNoticePress,
   onSupportPress,
 }: SidebarProps) {
@@ -88,6 +90,13 @@ export function Sidebar({
         <Pressable onPress={handlePress(onPlanChangePress)} style={[styles.listRow, styles.listRowLast]}>
           <AppText weight="medium" size="xs" color={colors.textMuted}>
             요금제 변경
+          </AppText>
+          <ChevronRightIcon size={24} />
+        </Pressable>
+
+        <Pressable onPress={handlePress(onLogoutPress)} style={[styles.listRow, styles.listRowLast]}>
+          <AppText weight="medium" size="xs" color={colors.textMuted}>
+            로그아웃
           </AppText>
           <ChevronRightIcon size={24} />
         </Pressable>
