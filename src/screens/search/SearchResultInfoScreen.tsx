@@ -64,7 +64,6 @@ export function SearchResultInfoScreen({ route, navigation }: Props) {
     {},
   );
   const sections = getDisplaySections(result.answer?.sections, result.items);
-  console.log(result);
 
   return (
     <Screen paddingHorizontal={0}>
