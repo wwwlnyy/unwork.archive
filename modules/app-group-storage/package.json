@@ -1,0 +1,7 @@
+{
+  "name": "app-group-storage",
+  "version": "1.0.0",
+  "description": "Local module for sharing the logged-in user id with the iOS Share Extension via App Group UserDefaults.",
+  "main": "index.ts",
+  "license": "UNLICENSED"
+}
