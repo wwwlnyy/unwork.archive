@@ -76,7 +76,7 @@ ios/, android/                    # expo prebuild로 생성된 네이티브 프�
 빌드 없이 안드로이드 기기에서 바로 시연해볼 수 있습니다.
 
 1. 안드로이드 기기에서 아래 링크를 엽니다. 브라우저가 자동으로 APK 파일을 다운로드합니다.
-   👉 https://expo.dev/artifacts/eas/TGTOVUIZgq54IxWvsh0W3l1Sqj3swBg3hzMa3QTx5RA.apk
+   👉 https://expo.dev/artifacts/eas/L7dxv4WJz7FZ0i6WthBRV_TH7EQj1iLqJM5dF6v0WiM.apk
 2. 다운로드가 끝나면 알림 또는 파일 앱에서 다운로드된 `.apk` 파일을 탭해 실행합니다.
 3. "출처를 알 수 없는 앱" 경고가 뜨면 **설정 > 이 출처 허용** (또는 팝업에서 바로 "허용")을 눌러줍니다. 브라우저나 파일 관리자 앱 단위로 한 번만 허용하면 됩니다.
 4. 다시 설치를 진행하면 앱이 정상적으로 설치·실행됩니다. Google Play Protect가 추가로 경고할 수 있는데, "무시하고 설치"를 선택하면 됩니다.
@@ -128,12 +128,14 @@ Metro 없이 하루 종일 독립 실행되는 시연용 빌드입니다.
    왼쪽 TARGETS에서 `2026UnithonScrapApp`, `ShareExtension` **두 타겟 모두** Signing & Capabilities 탭 → Team을 본인 Apple ID로 지정합니다. (무료 개인 계정으로도 가능)
 5. 레포를 클론하지 않았다면 위 "iOS 시뮬레이터" 섹션의 1~2단계(git clone, npm install)를 먼저 진행합니다.
 6. 실기기용 Release 빌드로 설치합니다. `<기기 이름>`은 3번에서 확인한 이름 또는 UDID를 그대로 넣습니다.
+
    ```bash
    npx expo run:ios --device "<기기 이름>" --configuration Release
    ```
 
    - `--configuration Release`가 핵심입니다. JS 번들이 앱에 통째로 박혀서, 설치 후에는 케이블도 Metro 서버도 없이 완전히 독립적으로 실행됩니다.
    - 설치가 끝나면(`Installing ... Complete 100%`) 케이블을 뽑아도 됩니다.
+
 7. 최초 실행 시 기기에 "신뢰되지 않은 개발자" 팝업이 뜨면: **설정 > 일반 > VPN 및 기기 관리** 에서 본인 Apple ID를 신뢰 처리한 뒤 앱 아이콘을 다시 탭해 실행합니다.
 8. 무료 Apple ID 인증서는 7일마다 만료됩니다. 만료되면 케이블을 다시 연결하고 6번 명령어를 그대로 재실행하면 됩니다.
 
@@ -147,4 +149,4 @@ Metro 없이 하루 종일 독립 실행되는 시연용 빌드입니다.
 ## 현재 상태
 
 - iOS/Android 실기기·에뮬레이터·시뮬레이터에서 빌드/설치/공유 저장/검색/내 스크랩 조회까지 전체 플로우 동작 확인
-- 백엔드 연동(로그인, 검색, 스크랩 저장/조회/통계)은 완료, 삭제·결제·카카오/네이버 SDK는 후속 작업
+- 백엔드 연동(로그인, 검색, 스크랩 저장/조회/통계)은 완료, 결제·카카오/네이버 SDK는 후속 작업
