@@ -214,6 +214,7 @@ export function MyScrapsScreen() {
           data={items}
           keyExtractor={(item) => item.id}
           numColumns={2}
+          columnWrapperStyle={styles.row}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <ScrapCard
@@ -265,8 +266,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   list: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     paddingBottom: 24,
+  },
+  row: {
+    justifyContent: "space-between",
   },
   loading: {
     marginTop: 40,

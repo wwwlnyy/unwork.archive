@@ -98,8 +98,8 @@ export function ScrapCard({
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
-    margin: 6,
+    width: "48%",
+    marginBottom: 12,
     borderRadius: 10,
     backgroundColor: colors.background,
     overflow: "hidden",

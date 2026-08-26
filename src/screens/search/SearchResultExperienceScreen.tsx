@@ -2,11 +2,13 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { FlatList, Image, Pressable, StyleSheet } from 'react-native';
 
+import { AppSidebar } from '../../components/AppSidebar';
 import { ScrapDetailSheet } from '../../components/ScrapDetailSheet';
 import { SearchResultHeader } from '../../components/SearchResultHeader';
 import { AppText } from '../../components/ui/AppText';
 import { Screen } from '../../components/ui/Screen';
 import { useSearch } from '../../hooks/useSearch';
+import { useSidebar } from '../../hooks/useSidebar';
 import { imageProxyUrl, type SavedItem } from '../../lib/api/contentClient';
 import { colors } from '../../styles/colors';
 import type { RootStackParamList } from '../../navigation/RootNavigator';
@@ -18,6 +20,7 @@ export function SearchResultExperienceScreen({ route, navigation }: Props) {
   const [selectedItem, setSelectedItem] = useState<SavedItem | null>(null);
   const { result } = route.params;
   const { runSearch, isSearching } = useSearch();
+  const sidebar = useSidebar();
 
   const handleSubmit = async () => {
     const trimmed = query.trim();
@@ -47,7 +50,8 @@ export function SearchResultExperienceScreen({ route, navigation }: Props) {
         query={query}
         onQueryChange={setQuery}
         onSubmitEditing={handleSubmit}
-        onMenuPress={() => navigation.navigate('MyScraps')}
+        onMenuPress={sidebar.open}
+        isSearching={isSearching}
       />
 
       <AppText weight="medium" size="lg" style={styles.headline}>
@@ -64,6 +68,8 @@ export function SearchResultExperienceScreen({ route, navigation }: Props) {
       />
 
       <ScrapDetailSheet item={selectedItem} onClose={() => setSelectedItem(null)} />
+
+      <AppSidebar visible={sidebar.isOpen} onClose={sidebar.close} scrapCount={sidebar.scrapCount} />
     </Screen>
   );
 }

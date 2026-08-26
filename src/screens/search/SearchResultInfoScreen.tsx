@@ -2,12 +2,14 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
+import { AppSidebar } from "../../components/AppSidebar";
 import { SearchResultHeader } from "../../components/SearchResultHeader";
 import { SourceBadge } from "../../components/SourceBadge";
 import { SourceListSheet } from "../../components/SourceListSheet";
 import { AppText } from "../../components/ui/AppText";
 import { Screen } from "../../components/ui/Screen";
 import { useSearch } from "../../hooks/useSearch";
+import { useSidebar } from "../../hooks/useSidebar";
 import {
   platformLabel,
   type SearchAnswerSection,
@@ -23,6 +25,7 @@ export function SearchResultInfoScreen({ route, navigation }: Props) {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const { result } = route.params;
   const { runSearch, isSearching } = useSearch();
+  const sidebar = useSidebar();
 
   const handleSubmit = async () => {
     const trimmed = query.trim();
@@ -71,7 +74,8 @@ export function SearchResultInfoScreen({ route, navigation }: Props) {
         query={query}
         onQueryChange={setQuery}
         onSubmitEditing={handleSubmit}
-        onMenuPress={() => navigation.navigate("MyScraps")}
+        onMenuPress={sidebar.open}
+        isSearching={isSearching}
       />
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -122,6 +126,8 @@ export function SearchResultInfoScreen({ route, navigation }: Props) {
         )}
         onClose={() => setSelectedSource(null)}
       />
+
+      <AppSidebar visible={sidebar.isOpen} onClose={sidebar.close} scrapCount={sidebar.scrapCount} />
     </Screen>
   );
 }

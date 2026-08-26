@@ -2,11 +2,13 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { FlatList, Linking, StyleSheet } from 'react-native';
 
+import { AppSidebar } from '../../components/AppSidebar';
 import { ScrapCard } from '../../components/ScrapCard';
 import { SearchResultHeader } from '../../components/SearchResultHeader';
 import { AppText } from '../../components/ui/AppText';
 import { Screen } from '../../components/ui/Screen';
 import { useSearch } from '../../hooks/useSearch';
+import { useSidebar } from '../../hooks/useSidebar';
 import type { RootStackParamList } from '../../navigation/RootNavigator';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SearchResultBrowse'>;
@@ -15,6 +17,7 @@ export function SearchResultBrowseScreen({ route, navigation }: Props) {
   const [query, setQuery] = useState(route.params.query);
   const { result } = route.params;
   const { runSearch, isSearching } = useSearch();
+  const sidebar = useSidebar();
 
   const handleSubmit = async () => {
     const trimmed = query.trim();
@@ -44,7 +47,8 @@ export function SearchResultBrowseScreen({ route, navigation }: Props) {
         query={query}
         onQueryChange={setQuery}
         onSubmitEditing={handleSubmit}
-        onMenuPress={() => navigation.navigate('MyScraps')}
+        onMenuPress={sidebar.open}
+        isSearching={isSearching}
       />
 
       <AppText weight="medium" size="lg" style={styles.headline}>
@@ -55,9 +59,12 @@ export function SearchResultBrowseScreen({ route, navigation }: Props) {
         data={result.items}
         keyExtractor={(item) => item.id}
         numColumns={2}
+        columnWrapperStyle={styles.row}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => <ScrapCard item={item} onPress={() => Linking.openURL(item.url)} />}
       />
+
+      <AppSidebar visible={sidebar.isOpen} onClose={sidebar.close} scrapCount={sidebar.scrapCount} />
     </Screen>
   );
 }
@@ -69,8 +76,11 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   list: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     paddingTop: 18,
     paddingBottom: 24,
+  },
+  row: {
+    justifyContent: 'space-between',
   },
 });

@@ -1,37 +1,23 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
+import { AppSidebar } from "../../components/AppSidebar";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { SearchBar } from "../../components/SearchBar";
-import { Sidebar } from "../../components/Sidebar";
 import { AppText } from "../../components/ui/AppText";
 import { Screen } from "../../components/ui/Screen";
-import { useAuth } from "../../context/AuthContext";
 import { useSearch } from "../../hooks/useSearch";
-import { getStats } from "../../lib/api/contentClient";
-import { mockUser } from "../../mocks/user";
+import { useSidebar } from "../../hooks/useSidebar";
 import { colors } from "../../styles/colors";
 import type { RootStackParamList } from "../../navigation/RootNavigator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export function HomeScreen({ navigation }: Props) {
-  const { accessToken, displayName, logout } = useAuth();
   const [query, setQuery] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [scrapCount, setScrapCount] = useState(0);
+  const sidebar = useSidebar();
   const { runSearch, isSearching } = useSearch();
-
-  const openSidebar = () => {
-    setIsSidebarOpen(true);
-    if (accessToken) {
-      // 사이드바에 보이는 스크랩 수는 부가 정보라 실패해도 조용히 이전 값을 유지한다.
-      getStats(accessToken)
-        .then((stats) => setScrapCount(stats.total))
-        .catch(() => {});
-    }
-  };
 
   const handleSubmit = async () => {
     const trimmed = query.trim();
@@ -55,14 +41,9 @@ export function HomeScreen({ navigation }: Props) {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigation.reset({ index: 0, routes: [{ name: "Login" }] });
-  };
-
   return (
     <Screen>
-      <ScreenHeader onMenuPress={openSidebar} />
+      <ScreenHeader onMenuPress={sidebar.open} />
 
       <AppText weight="bold" size="xl" style={styles.headline}>
         저장한 정보를,{"\n"}다시 찾는 곳.
@@ -80,21 +61,10 @@ export function HomeScreen({ navigation }: Props) {
         value={query}
         onChangeText={setQuery}
         onSubmit={handleSubmit}
+        isSearching={isSearching}
       />
-      {isSearching && (
-        <ActivityIndicator style={styles.searchSpinner} color={colors.text} />
-      )}
 
-      <Sidebar
-        visible={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        userName={displayName ?? mockUser.name}
-        scrapCount={scrapCount}
-        onScrapListPress={() => navigation.navigate("MyScraps")}
-        onPlanChangePress={() => navigation.navigate("Pay")}
-        onLogoutPress={handleLogout}
-        // TODO: 공지사항/고객센터 화면 미구현
-      />
+      <AppSidebar visible={sidebar.isOpen} onClose={sidebar.close} scrapCount={sidebar.scrapCount} />
     </Screen>
   );
 }
@@ -107,8 +77,5 @@ const styles = StyleSheet.create({
   subline: {
     marginTop: 12,
     marginBottom: 97,
-  },
-  searchSpinner: {
-    marginTop: 16,
   },
 });

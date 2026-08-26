@@ -9,15 +9,28 @@ type SearchResultHeaderProps = {
   onQueryChange: (query: string) => void;
   onSubmitEditing: () => void;
   onMenuPress?: () => void;
+  isSearching?: boolean;
 };
 
-export function SearchResultHeader({ query, onQueryChange, onSubmitEditing, onMenuPress }: SearchResultHeaderProps) {
+export function SearchResultHeader({
+  query,
+  onQueryChange,
+  onSubmitEditing,
+  onMenuPress,
+  isSearching,
+}: SearchResultHeaderProps) {
   return (
     <View style={styles.container}>
       <Pressable onPress={onMenuPress} hitSlop={8} style={styles.menuButton}>
         <MenuIcon size={24} />
       </Pressable>
-      <SearchBar value={query} onChangeText={onQueryChange} onSubmit={onSubmitEditing} borderColor={colors.text} />
+      <SearchBar
+        value={query}
+        onChangeText={onQueryChange}
+        onSubmit={onSubmitEditing}
+        borderColor={colors.text}
+        isSearching={isSearching}
+      />
     </View>
   );
 }

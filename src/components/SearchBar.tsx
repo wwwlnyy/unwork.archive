@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { SearchIcon } from './icons/SearchIcon';
 import { colors } from '../styles/colors';
@@ -11,6 +11,7 @@ type SearchBarProps = {
   autoFocus?: boolean;
   placeholder?: string;
   borderColor?: string;
+  isSearching?: boolean;
 };
 
 export function SearchBar({
@@ -20,6 +21,7 @@ export function SearchBar({
   autoFocus,
   placeholder = 'Search',
   borderColor = colors.textFaint,
+  isSearching = false,
 }: SearchBarProps) {
   return (
     <View style={[styles.container, { borderColor }]}>
@@ -32,10 +34,15 @@ export function SearchBar({
         placeholderTextColor={colors.textFaint}
         style={styles.input}
         returnKeyType="search"
+        editable={!isSearching}
       />
-      <Pressable onPress={onSubmit} hitSlop={8} accessibilityLabel="검색">
-        <SearchIcon size={24} />
-      </Pressable>
+      {isSearching ? (
+        <ActivityIndicator color={colors.text} accessibilityLabel="검색 중" />
+      ) : (
+        <Pressable onPress={onSubmit} hitSlop={8} accessibilityLabel="검색">
+          <SearchIcon size={24} />
+        </Pressable>
+      )}
     </View>
   );
 }
