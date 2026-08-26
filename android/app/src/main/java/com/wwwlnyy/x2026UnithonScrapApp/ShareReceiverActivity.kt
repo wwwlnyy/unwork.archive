@@ -15,6 +15,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 private const val MINIMUM_RESULT_VISIBLE_DURATION_MS = 500L
+// unithonapi.fly.dev는 인증 전용 서버라 /scrap이 없다. 콘텐츠 API는 ai-image-api.fly.dev.
 private const val SCRAP_ENDPOINT = "https://ai-image-api.fly.dev/scrap"
 
 class ShareReceiverActivity : AppCompatActivity() {

@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 // so a near-instant response doesn't read as a frozen/flickering screen.
 private let minimumResultVisibleDuration: TimeInterval = 0.5
 
+// unithonapi.fly.dev는 인증 전용 서버라 /scrap이 없다. 콘텐츠 API는 ai-image-api.fly.dev.
 private let scrapEndpoint = URL(string: "https://ai-image-api.fly.dev/scrap")!
 
 class ShareExtensionViewController: UIViewController {

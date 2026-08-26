@@ -1,7 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { login as loginRequest, logout as logoutRequest, type AuthProvider } from '../lib/api/authClient';
+import { login as loginRequest, logout as logoutRequest, type LoginParams } from '../lib/api/authClient';
 import { setAccessToken as setAppGroupAccessToken } from '../../modules/app-group-storage';
 
 const STORAGE_KEY_USER_ID = 'unwork_user_id';
@@ -16,7 +16,7 @@ interface AuthState {
 
 interface AuthContextValue extends AuthState {
   isRestoring: boolean;
-  login: (provider: AuthProvider, providerId: string, displayName?: string | null) => Promise<{ isNewUser: boolean }>;
+  login: (params: LoginParams, displayName?: string | null) => Promise<{ isNewUser: boolean }>;
   logout: () => Promise<void>;
 }
 
@@ -64,8 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       ...state,
       isRestoring,
-      login: async (provider, providerId, displayName) => {
-        const result = await loginRequest(provider, providerId);
+      login: async (params, displayName) => {
+        const result = await loginRequest(params);
         setState({ userId: result.user_id, accessToken: result.access_token, displayName: displayName ?? null });
         setAppGroupAccessToken(result.access_token);
         await persistSession(result.user_id, result.access_token, displayName);

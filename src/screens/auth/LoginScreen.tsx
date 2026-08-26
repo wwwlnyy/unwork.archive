@@ -36,34 +36,33 @@ export function LoginScreen({ navigation }: Props) {
     null,
   );
 
-  const resolveProviderProfile = async (
-    provider: AuthProvider,
-  ): Promise<{ providerId: string; displayName: string | null } | null> => {
-    if (provider === "google") {
-      return signInWithGoogle();
-    }
+  const resolveStubProviderId = async (provider: AuthProvider): Promise<string> => {
     // TODO: 카카오/네이버는 아직 실제 SDK 미연동. 같은 기기에서는 같은 임시 계정으로 로그인한다.
     const storageKey = `${STUB_PROVIDER_ID_PREFIX}_${provider}`;
     const savedProviderId = await SecureStore.getItemAsync(storageKey);
     if (savedProviderId) {
-      return { providerId: savedProviderId, displayName: null };
+      return savedProviderId;
     }
 
     const nextProviderId = `${provider}-stub-${Math.random().toString(36).slice(2)}`;
     await SecureStore.setItemAsync(storageKey, nextProviderId);
-    return { providerId: nextProviderId, displayName: null };
+    return nextProviderId;
   };
 
   const handleSnsLogin = async (provider: AuthProvider) => {
     setLoadingProvider(provider);
     try {
-      const profile = await resolveProviderProfile(provider);
-      if (!profile) {
-        // 사용자가 로그인 창을 취소한 경우
-        return;
+      if (provider === "google") {
+        const profile = await signInWithGoogle();
+        if (!profile) {
+          // 사용자가 로그인 창을 취소한 경우
+          return;
+        }
+        await login({ provider: "google", socialToken: profile.socialToken }, profile.displayName);
+      } else {
+        const providerId = await resolveStubProviderId(provider);
+        await login({ provider, providerId }, null);
       }
-      const { isNewUser } = await login(provider, profile.providerId, profile.displayName);
-      console.log(`[login] provider=${provider} isNewUser=${isNewUser}`);
       navigation.replace("Home");
     } catch (error) {
       const message =

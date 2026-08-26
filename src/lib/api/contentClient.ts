@@ -1,3 +1,6 @@
+// unithonapi.fly.dev는 인증(auth) 전용 서버라 /scrap, /search, /items, /stats 등
+// 콘텐츠 API는 없다 (404). 콘텐츠 API는 여전히 ai-image-api.fly.dev에 있다 —
+// 다만 unithonapi.fly.dev에서 발급한 access_token을 그대로 인식한다.
 const CONTENT_BASE_URL = "https://ai-image-api.fly.dev";
 
 export type ContentType = "informational" | "experiential";

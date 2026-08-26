@@ -5,7 +5,8 @@ Figma: https://www.figma.com/design/pHWPq4XpdWGCsNd7JrPJit/UNITHON-UI-UX (fileKe
 ## 1. 아키텍처 (확정)
 
 - **네이티브 RN 컴포넌트 + React Native Web**. 같은 코드가 모바일(iOS/Android)과 PC 웹(`expo start --web`)에 모두 빌드된다.
-- 인증: 팀원 Auth 서버(`unithon.fly.dev`)에서 로그인 → `access_token`(JWT, 60분 만료, 리프레시 없음)을 받아 Content API 호출마다 `Authorization: Bearer` 헤더로 첨부. **`user_id`를 프론트가 직접 만들거나 쿼리로 보내지 않는다** (과거엔 그랬으나 현재는 전부 토큰 기반으로 전환 완료).
+- 인증: 팀원 Auth 서버(`unithonapi.fly.dev`, 2026-08-26부터 `unithon.fly.dev`에서 이전)에서 로그인 → `access_token`(JWT, 60분 만료, 리프레시 없음)을 받아 Content API 호출마다 `Authorization: Bearer` 헤더로 첨부. **`user_id`를 프론트가 직접 만들거나 쿼리로 보내지 않는다** (과거엔 그랬으나 현재는 전부 토큰 기반으로 전환 완료). 구글 로그인은 `provider_id` 대신 구글 Access Token(`social_token`)을 서버가 직접 검증하는 방식으로 전환되어, 기기가 바뀌어도 같은 계정으로 매칭된다.
+  - ⚠️ Content API(`/scrap`, `/search`, `/items`, `/stats`)는 여전히 `ai-image-api.fly.dev`에 있다 — `unithonapi.fly.dev`는 auth 전용이라 이 경로들이 없음(404). 2026-08-26에 받은 마이그레이션 문서는 "모든 API를 unithonapi.fly.dev로" 라고 안내했지만 실제 배포는 auth만 이전된 상태라 문서와 다름. `unithonapi.fly.dev`가 발급한 토큰은 `ai-image-api.fly.dev`에서 그대로 통한다(curl로 확인 완료).
 - 공유 저장: iOS는 네이티브 Share Extension(Swift, `ios/2026UnithonScrapAppShareExtension/ShareExtensionViewController.swift`)이 공유받은 URL로 **직접** `POST /scrap` 호출. 메인 앱과 Extension은 별도 프로세스라 로그인 토큰을 공유해야 하는데, 이를 위해 App Group 기반 로컬 네이티브 모듈(`modules/app-group-storage`)을 만들어 로그인 시 토큰을 저장해둔다. (`expo-share-intent`는 이 방식 채택 후 iOS/Android 모두 비활성화됨 — JS 쪽에서 공유 데이터를 직접 다루지 않음.)
 
 ## 2. 진행 현황 (2026-08-25 기준)

@@ -1,7 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import { FlatList, Image, StyleSheet, View } from 'react-native';
+import { FlatList, Image, Pressable, StyleSheet } from 'react-native';
 
+import { ScrapDetailSheet } from '../../components/ScrapDetailSheet';
 import { SearchResultHeader } from '../../components/SearchResultHeader';
 import { AppText } from '../../components/ui/AppText';
 import { Screen } from '../../components/ui/Screen';
@@ -14,6 +15,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'SearchResultExperience'
 
 export function SearchResultExperienceScreen({ route, navigation }: Props) {
   const [query, setQuery] = useState(route.params.query);
+  const [selectedItem, setSelectedItem] = useState<SavedItem | null>(null);
   const { result } = route.params;
   const { runSearch, isSearching } = useSearch();
 
@@ -58,18 +60,22 @@ export function SearchResultExperienceScreen({ route, navigation }: Props) {
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.grid}
-        renderItem={({ item }) => <GridThumbnail item={item} />}
+        renderItem={({ item }) => <GridThumbnail item={item} onPress={() => setSelectedItem(item)} />}
       />
+
+      <ScrapDetailSheet item={selectedItem} onClose={() => setSelectedItem(null)} />
     </Screen>
   );
 }
 
-function GridThumbnail({ item }: { item: SavedItem }) {
-  if (!item.thumbnail) {
-    return <View style={styles.gridItem} />;
-  }
-
-  return <Image source={{ uri: imageProxyUrl(item.thumbnail) }} style={styles.gridItem} resizeMode="cover" />;
+function GridThumbnail({ item, onPress }: { item: SavedItem; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={styles.gridItem}>
+      {item.thumbnail && (
+        <Image source={{ uri: imageProxyUrl(item.thumbnail) }} style={styles.gridItem} resizeMode="cover" />
+      )}
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { Animated, FlatList, Image, Linking, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
 
-import { CloseIcon } from './icons/CloseIcon';
+import { SourceCard } from './SourceCard';
 import { AppText } from './ui/AppText';
-import { imageProxyUrl, type SavedItem } from '../lib/api/contentClient';
+import { type SavedItem } from '../lib/api/contentClient';
 import { colors } from '../styles/colors';
 
 const ANIMATION_DURATION_MS = 220;
@@ -14,39 +14,6 @@ type SourceListSheetProps = {
   items: SavedItem[];
   onClose: () => void;
 };
-
-function SourceRow({ item }: { item: SavedItem }) {
-  const [isImageReady, setIsImageReady] = useState(!item.thumbnail);
-
-  return (
-    <Pressable style={styles.row} onPress={() => Linking.openURL(item.url)}>
-      <View style={styles.thumbnailWrap}>
-        {item.thumbnail && (
-          <Image
-            source={{ uri: imageProxyUrl(item.thumbnail) }}
-            style={styles.thumbnail}
-            onLoadEnd={() => setIsImageReady(true)}
-          />
-        )}
-        {!isImageReady && (
-          <View style={[styles.thumbnail, styles.thumbnailPlaceholder, styles.thumbnailOverlay]} />
-        )}
-      </View>
-      {isImageReady && (
-        <View style={styles.rowText}>
-          <AppText weight="semiBold" size="sm" color={colors.text} numberOfLines={2}>
-            {item.title ?? item.url}
-          </AppText>
-          {item.author ? (
-            <AppText weight="regular" size="xs" color={colors.textFaint} numberOfLines={1}>
-              {item.author}
-            </AppText>
-          ) : null}
-        </View>
-      )}
-    </Pressable>
-  );
-}
 
 export function SourceListSheet({ visible, title, items, onClose }: SourceListSheetProps) {
   const translateY = useRef(new Animated.Value(1)).current;
@@ -74,20 +41,17 @@ export function SourceListSheet({ visible, title, items, onClose }: SourceListSh
           },
         ]}
       >
-        <View style={styles.header}>
-          <AppText weight="bold" size="lg" color={colors.text}>
-            {title}
-          </AppText>
-          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="닫기">
-            <CloseIcon size={24} />
-          </Pressable>
-        </View>
+        <View style={styles.dragHandle} />
+
+        <AppText weight="medium" size="lg" color={colors.text} style={styles.header}>
+          {title} 출처 · {items.length}개
+        </AppText>
 
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => <SourceRow item={item} />}
+          renderItem={({ item }) => <SourceCard item={item} />}
         />
       </Animated.View>
     </Modal>
@@ -104,49 +68,27 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    maxHeight: '70%',
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 20,
+    maxHeight: '75%',
+    backgroundColor: colors.background,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingTop: 12,
     paddingBottom: 24,
   },
+  dragHandle: {
+    alignSelf: 'center',
+    width: 47,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: colors.border,
+    marginBottom: 22,
+  },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     marginHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   list: {
     paddingHorizontal: 20,
-    gap: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'center',
-  },
-  thumbnailWrap: {
-    width: 56,
-    height: 56,
-  },
-  thumbnail: {
-    width: 56,
-    height: 56,
-    borderRadius: 8,
-    backgroundColor: colors.border,
-  },
-  thumbnailPlaceholder: {
-    backgroundColor: colors.border,
-  },
-  thumbnailOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  rowText: {
-    flex: 1,
-    gap: 4,
+    gap: 8,
   },
 });

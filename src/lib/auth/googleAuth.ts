@@ -19,7 +19,7 @@ function ensureConfigured() {
   isConfigured = true;
 }
 
-export async function signInWithGoogle(): Promise<{ providerId: string; displayName: string | null } | null> {
+export async function signInWithGoogle(): Promise<{ socialToken: string; displayName: string | null } | null> {
   ensureConfigured();
 
   if (Platform.OS === 'android') {
@@ -31,8 +31,12 @@ export async function signInWithGoogle(): Promise<{ providerId: string; displayN
     return null;
   }
 
+  // 서버가 provider_id가 아니라 구글 Access Token(social_token)으로 계정을 식별하므로
+  // 기기와 무관하게 항상 같은 구글 계정으로 로그인된다.
+  const { accessToken } = await GoogleSignin.getTokens();
+
   return {
-    providerId: response.data.user.id,
+    socialToken: accessToken,
     displayName: response.data.user.name ?? null,
   };
 }
